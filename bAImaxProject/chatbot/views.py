@@ -126,61 +126,35 @@ def getMedicalCenter(promp):
 # ---------------- CHAT ----------------
 
 def send(request:HttpRequest):
-    message = request.POST['message']
-    room_id = request.POST['chat_id']
-    user = User.objects.get(id=request.user.id)
-    chatid = Chat.objects.get(id_chat=room_id)
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        room_id = request.POST.get('chat_id')
+        user = User.objects.get(id=request.user.id)
+        chatid = Chat.objects.get(id_chat=room_id)
 
-    new_message = Message.objects.create(content=message, user=user, chat=chatid)
-    new_message.save()
+        new_message = Message.objects.create(content=message, user=user, chat=chatid)
+        new_message.save()
 
-    # Historial limitado
-    msglimit=20
-    messages = Message.objects.filter(chat=room_id)
-    x=list(messages)[-msglimit:]
+        # Historial limitado
+        msglimit=20
+        messages = Message.objects.filter(chat=room_id)
+        x=list(messages)[-msglimit:]
 
-    historial=[
-        {"role": "system", "content": "You are bAimax, a health assistant..."}
-    ]
-    for i in x:
-        autor="assistant" if i.user==None else "user"
-        historial.append({ "role": autor, "content": i.content })
+        historial=[
+            {"role": "system", "content": "You are bAimax, a health assistant..."}
+        ]
+        for i in x:
+            autor="assistant" if i.user==None else "user"
+            historial.append({ "role": autor, "content": i.content })
 
-    client = get_openai_client()
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=historial,
-        tools=tools,
-        tool_choice="auto",
-    )
-    response_message = completion.choices[0].message
-    z = response_message.content
+        provider = chatbotback.OpenAIProvider()
+        z = provider.get_response("", historial, tools)
 
-    # Procesar tool calls
-    tool_calls = response_message.tool_calls
-    if tool_calls:
-        available_functions = {"getMedicalCenter": getMedicalCenter}
-        historial.append(response_message)
-        for tool_call in tool_calls:
-            function_name = tool_call.function.name
-            function_args = json.loads(tool_call.function.arguments)
-            function_response = available_functions[function_name](promp=function_args.get("promp"))
-            historial.append({
-                "tool_call_id": tool_call.id,
-                "role": "tool",
-                "name": function_name,
-                "content": function_response,
-            })
-        second_response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=historial,
-        )
-        z = second_response.choices[0].message.content
+        new_message = Message.objects.create(content=z, user=None, chat=chatid)
+        new_message.save()
 
-    new_message = Message.objects.create(content=z, user=None, chat=chatid)
-    new_message.save()
-
-    return HttpResponse('Message sent successfully')
+        return HttpResponse('Message sent successfully')
+    return HttpResponse('Invalid request', status=400)
 
 def getMessages(request, chatid):
     room_details = Chat.objects.get(id_chat=chatid)

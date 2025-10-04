@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Madimi+One&display=swap');
+
+.navbar{
+    padding: 0px;
+    font-family: Madimi One;
+}
+.container-fluid{
+    background-color: #001c55;
+}
+.logo{
+    max-height: 60px;
+}
+.navbar-brand{
+    color: #a6e1fa;
+    transition: all ease .2s;
+    font-size: x-large;
+}
+.navbar-brand:hover{
+    color: #f0f0f0;
+    scale: 1.2;
+}

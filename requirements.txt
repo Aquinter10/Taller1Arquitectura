@@ -1,0 +1,7 @@
+django
+whitenoise
+openai
+pillow
+matplotlib
+python-dotenv
+twilio

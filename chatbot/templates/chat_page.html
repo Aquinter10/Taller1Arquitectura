@@ -1,0 +1,23 @@
+{% extends 'base3.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'chat_page.css' %}">
+    <div class="contenedor">
+        {% if chats %}
+        <div class="chats">
+            <h2 class="titulo">Chats</h2>
+            <ul class="lista">
+                {% for chat in chats %}
+                <li class="item">
+                    <a href="{% url 'chatbot' chat.id_chat %}" class="chat_link">{{ chat.id_chat }}: {{ chat.get_first_message_content }}</a>
+                </li>
+                {% endfor %}
+                </ul>
+        </div>
+        {% else %}
+        <h2 class="nochats">No hay chats</h2>
+        {% endif %}
+        <a href="{% url 'checkview' %}" class="new_chat">Crear Nuevo Chat</a>    
+        <img src="{% static 'robot2.png' %}" class="robot">
+    </div>
+{% endblock content %}

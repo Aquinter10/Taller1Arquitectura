@@ -1,0 +1,42 @@
+{% extends navbar %}
+{% block content %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'home.css' %}">
+
+<title>Home</title>
+<div class="nonavbar">
+    <div class="contenedor">
+        <div class="texto">
+            <h1 class="slogan">Connecting needs with <br> healthy solutions</h1>
+            <br>
+            <h4 class="exp">Are you sick? Tell bAImax your symptoms, using AI, <br>
+            it will diagnose and provide you with contact information <br>
+            for specialized medical assistance. 
+            </h4> <br>
+            <a class="getstarted" href="/signup">
+                <h2 class="start">Get Started!</h2> 
+            </a>
+        </div>
+        <div class="photo">
+            <img src="{% static 'robot1.png' %}" class="robot" alt="">
+        </div>
+    </div>
+    <div class="requirements">
+        <div class="info">
+            <img src="{% static 'medicine.png' %}" class="icons" alt="">
+            <p class="req">Diagnosis based on your symptoms</p>
+        </div>
+        <div class="info">
+            <img src="{% static 'contacts.png' %}" class="icons" alt="">
+            <p class="req">Contact info for medical care</p>
+        </div>
+        <div class="info">
+            <img src="{% static 'schedule.png' %}" class="icons" alt="">
+            <p class="req">Appointment Scheduling</p>
+        </div>
+    </div>
+</div>
+    
+{% endblock content %}
+

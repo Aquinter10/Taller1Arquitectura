@@ -1,0 +1,64 @@
+{% extends 'base3.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'chatbot.css' %}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+    <script src="{% static 'chatbot.js' %}"></script>    
+    <script>
+        $(document).ready(function(){
+
+setInterval(function(){
+    $.ajax({
+        type: 'GET',
+        url : "/getMessages/{{room}}/",
+        success: function(response){
+            $("#display").empty();
+            for (var key in response.messages)
+            {
+                if(response.messages[key].user__username == null){
+                    var temp="<div class='messageBot message'><b>"+'bAImax'+"</b><p>"+response.messages[key].content+"</p><span class='time'>"+response.messages[key].time+"</span></div>";
+                    $("#display").append(temp);
+                }
+                else{
+                    var temp="<div class='messageUser message'><b>"+response.messages[key].user__username+"</b><p>"+response.messages[key].content+"</p><span class='time'>"+response.messages[key].time+"</span></div>";
+                    $("#display").append(temp);
+                }
+            }
+        },
+        error: function(response){
+            // alert('An error occured')
+        }
+    });
+},1000);
+})
+    </script>    
+</head>
+<body>
+    <div class="contenedor">
+        <div class="chat-container">
+            <div id="display"></div>
+            <form method="POST" id="post-form" autocomplete="off">
+                {% csrf_token %}
+                <input type="hidden" name="username" id="username" value="{{username}}">
+                <input type="hidden" name="chat_id" id="chat_id" value="{{chat.id_chat}}">
+                <div class="inputs">
+                    <div class="chat-bar">
+                        <input type="text" name="message" id="message" placeholder="Write your symptoms...">
+                        <input type="submit" id = 'Send' value="Send">
+                    </div>
+                    <div class="emergency">
+                        <a href="/emergency" id = 'SOS'>SOS</a>
+                    </div>
+                </div>
+                </form>
+        </div>
+    </div>
+    <div>{{ mensaje }}</div>
+</body>
+</html>
+{% endblock content %}
